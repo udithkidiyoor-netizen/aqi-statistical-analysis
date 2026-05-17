@@ -1,0 +1,62 @@
+---
+title: "AQI Descriptive Statistics Project"
+format: html
+---
+
+# Loading the Datase
+```{python}
+import pandas as pd
+data=pd.read_csv("C:/Users/Udith P Kidiyoor/Downloads/c4_epa_air_quality.csv")
+data.head(20)
+```
+# Checking Dataset Information
+```{python}
+data.info()
+```
+# Finding the Shape of the Dataset
+```{python}
+data.shape
+```
+# Looking at Descriptive Statistics
+```{python}
+data.describe()
+```
+# Checking for Missing Values
+```{python}
+data.isna().sum()
+```
+# Converting the Date Column
+```{python}
+data["date_local"]=pd.to_datetime(data["date_local"])
+data.info()
+```
+# Plotting the AQI Distribution
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.figure(figsize=(10,6))
+sns.histplot(data["aqi"], bins=30, kde=True, color="pink")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+# Counting Records by State
+```{python}
+data["state_name"].value_counts()
+```
+# Finding State-wise Percentage Distribution
+```{python}
+data["state_name"].value_counts(normalize=True)*100
+```
+# Counting Unique States
+```{python}
+data["state_name"].nunique()
+```
+# Calculating Average AQI for Each State
+```{python}
+data.groupby("state_name")["aqi"].mean().sort_values(ascending=False)
+```
+# Summary of the State Column
+```{python}
+data["state_name"].describe()
+```
