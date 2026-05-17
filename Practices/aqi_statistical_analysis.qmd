@@ -1,0 +1,110 @@
+---
+title: "AQI_Statistical_Analysis"
+format: html
+---
+
+## Loading the AQI Dataset
+```{python}
+import pandas as pd
+data=pd.read_csv("C:/Users/Udith P Kidiyoor/Downloads/modified_c4_epa_air_quality.csv")
+data.head(10)
+```
+## Inspecting Dataset Information
+```{python}
+data.info()
+```
+## Checking Dataset Dimensions
+```{python}
+data.shape
+```
+## Generating Descriptive Statistics
+```{python}
+data.describe()
+```
+## Converting the Date Column to Datetime
+```{python}
+data["date_local"]=pd.to_datetime(data["date_local"])
+```
+## Checking for Missing Values
+```{python}
+data.isna().sum()
+```
+## Creating a Missing Value Mask
+```{python}
+mask=data.isna()
+mask=mask.any(axis=1)
+```
+## Extracting Rows with Missing Values
+```{python}
+nulls=data[mask]
+nulls
+```
+## Checking for Duplicate Records
+```{python}
+data.duplicated().sum()
+```
+## Visualizing the AQI Log Distribution
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.figure(figsize=(10,5))
+sns.histplot(data["aqi_log"], color="skyblue", kde=True)
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+## Detecting Outliers Using a Boxplot
+```{python}
+plt.figure(figsize=(10,5))
+sns.boxplot(data=data, x="aqi_log", color="skyblue")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+## Calculating Mean and Standard Deviation
+```{python}
+mean=data["aqi_log"].mean()
+std=data["aqi_log"].std()
+upper_limit=mean + 1* std
+lower_limit= mean - 1* std
+```
+## Finding Values Within 1 Standard Deviation
+```{python}
+data["aqi_log"].between(lower_limit,upper_limit).mean()*100
+```
+## Finding Values Within 2 Standard Deviations
+```{python}
+upper_limit=mean + 2* std
+lower_limit= mean - 2* std
+data["aqi_log"].between(lower_limit,upper_limit).mean()* 100
+```
+## Finding Values Within 3 Standard Deviations
+```{python}
+upper_limit=mean + 3* std
+lower_limit= mean -3* std
+data["aqi_log"].between(lower_limit,upper_limit).mean()* 100
+```
+## Calculating Z-Scores
+```{python}
+from scipy import stats
+data["Z_score"]=stats.zscore(data["aqi_log"])
+data.head(10)
+```
+## Detecting Outliers Using Z-Score Analysis
+```{python}
+data[(data["Z_score"]>3) | (data["Z_score"]<-3)]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
