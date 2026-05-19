@@ -1,0 +1,145 @@
+---
+title: "AQI Sampling Analysis Project"
+format: html
+---
+
+# Importing and Loading the Dataset
+
+```{python}
+import pandas as pd
+
+data = pd.read_csv("C:/Users/Udith P Kidiyoor/Downloads/c4_epa_air_quality.csv")
+data.head(10)
+```
+
+# Inspecting Dataset Information
+
+```{python}
+data.info()
+```
+
+# Checking Dataset Dimensions
+
+```{python}
+data.shape
+```
+
+# Converting Date Column and Generating Descriptive Statistics
+
+```{python}
+data["date_local"] = pd.to_datetime(data["date_local"])
+data.describe()
+```
+
+# Checking for Missing Values
+
+```{python}
+data.isna().sum()
+```
+
+# Identifying Rows Containing Missing Values
+
+```{python}
+mask = data.isna()
+mask = mask.any(axis=1)
+```
+
+# Extracting Rows with Missing Values
+
+```{python}
+nulls = data[mask]
+nulls
+```
+
+# Calculating the Population Mean AQI
+
+```{python}
+population_mean = data["aqi"].mean()
+population_mean
+# 6.757692
+```
+
+# Creating a Random Sample
+
+```{python}
+sample_data = data.sample(n=50, replace=True, random_state=42)
+sample_data
+```
+
+# Calculating the First Sample Mean
+
+```{python}
+sample_mean1 = sample_data["aqi"].mean()
+sample_mean1
+# 5.54
+```
+
+# Generating Multiple Sample Mean Estimates
+
+```{python}
+estimate_list = []
+
+for i in range(10000):
+    estimate_list.append(
+        data["aqi"].sample(n=50, replace=True).mean()
+    )
+
+estimate_df = pd.DataFrame({"estimate": estimate_list})
+```
+
+# Inspecting the Sampling Distribution Data
+
+```{python}
+estimate_df.head()
+```
+
+# Calculating the Mean of Sample Means
+
+```{python}
+sample_mean = estimate_df.mean()
+sample_mean
+# 6.754114
+```
+
+# Visualizing the Sampling Distribution
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(10,5))
+
+sns.histplot(
+    estimate_df["estimate"],
+    color="darkorange",
+    kde=True
+)
+
+plt.axvline(
+    x=estimate_df["estimate"].mean(),
+    color="green",
+    label="Mean of Sample Means"
+)
+
+plt.axvline(
+    x=population_mean,
+    color="red",
+    label="Population Mean"
+)
+
+plt.axvline(
+    x=sample_mean1,
+    color="black",
+    label="First Sample Mean"
+)
+
+plt.title("Sampling Distribution of AQI Sample Means")
+plt.xlabel("Sample Mean AQI")
+plt.ylabel("Density")
+
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+
+plt.show()
+```
